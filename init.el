@@ -53,7 +53,7 @@ This function should only modify configuration layer settings."
      latex
      markdown
      multiple-cursors
-     neotree
+     ;; neotree
      nginx
      org
      ;; osx
@@ -69,6 +69,7 @@ This function should only modify configuration layer settings."
      sql
      syntax-checking
      terraform
+     treemacs
      ;; version-control
      yaml
      )
