@@ -43,6 +43,7 @@ This function should only modify configuration layer settings."
      better-defaults
      clojure
      csv
+     deft
      emacs-lisp
      finance
      git
@@ -481,8 +482,12 @@ before packages are loaded."
     (load custom-file))
   (with-eval-after-load 'org
     (add-to-list 'org-agenda-files (expand-file-name "org"
-                                                     user-home-directory)))
+                                                     user-home-directory))
+    (add-to-list 'org-agenda-files (expand-file-name "~/org/meetings"))
+    (add-to-list 'org-agenda-files (expand-file-name "~/org/notes")))
   (add-to-list 'auto-mode-alist '("\\.env\\'" . shell-script-mode))
+  (setq deft-directory (expand-file-name "~/org/notes")
+        deft-extentions '("org" "md" "txt"))
   (add-hook 'makefile-mode-hook #'(lambda () (setq tab-width 8)))
   (with-eval-after-load 'anaconda-mode
     (remove-hook 'anaconda-mode-response-read-fail-hook
