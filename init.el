@@ -506,11 +506,7 @@ before packages are loaded."
   (let ((my-local-file (expand-file-name "local.el"
                                          dotspacemacs-directory)))
     (mikemacs/load-if-exists my-local-file))
-  (add-hook 'sql-mode-hook
-            '(lambda ()
-               (when (and (buffer-file-name)
-                          (string-match-p "/target/" (buffer-file-name)))
-                 (toggle-read-only 1))))
+  (add-hook 'sql-mode-hook 'lovepop/sql-mode-read-only-dbt-target)
   )
 
 (defun mikemacs/load-if-exists (f)
@@ -522,3 +518,8 @@ before packages are loaded."
 
 (defun mikemacs/python-docstring-mode-hook ()
   (python-docstring-mode t))
+
+(defun lovepop/sql-mode-read-only-dbt-target ()
+  (when (and (buffer-file-name)
+             (string-match-p "/target/" (buffer-file-name)))
+    (toggle-read-only 1)))
