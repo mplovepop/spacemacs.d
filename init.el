@@ -58,7 +58,11 @@ This function should only modify configuration layer settings."
      nginx
      org
      ;; osx
-     python
+     (python :variables
+             python-pipenv-activate t
+             python-test-runner '(pytest nose)
+             python-formatter 'black
+             python-format-on-save t)
      racket
      react
      restclient
@@ -382,7 +386,7 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
-   dotspacemacs-smart-closing-parenthesis nil
+   dotspacemacs-smart-closing-parenthesis t
 
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
@@ -478,8 +482,7 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
-  (when (file-exists-p custom-file)
-    (load custom-file))
+  (mikemacs/load-if-exists custom-file)
   (with-eval-after-load 'org
     (add-to-list 'org-agenda-files (expand-file-name "org"
                                                      user-home-directory))
@@ -488,32 +491,34 @@ before packages are loaded."
   (add-to-list 'auto-mode-alist '("\\.env\\'" . shell-script-mode))
   (setq deft-directory (expand-file-name "~/org/notes")
         deft-extentions '("org" "md" "txt"))
-  (add-hook 'makefile-mode-hook #'(lambda () (setq tab-width 8)))
+  (add-hook 'makefile-mode-hook 'mikemacs/makefile-tab-width-hook)
   (with-eval-after-load 'anaconda-mode
     (remove-hook 'anaconda-mode-response-read-fail-hook
                  'anaconda-mode-show-unreadable-response))
   (use-package python-docstring
     :ensure t
-    :config (python-docstring-install))
-  (use-package blacken
-    :ensure t
-    :hook (python-mode . blacken-mode))
-  (use-package pipenv
-    :ensure t
-    :hook (python-mode . pipenv-mode))
+    :config (add-hook 'python-mode-hook 'mikemacs/python-docstring-mode-hook))
   ;; Load secrets, if any (not version controlled)
   (let ((my-secrets-file (expand-file-name "secrets.el"
                                            dotspacemacs-directory)))
-    (when (file-exists-p my-secrets-file)
-      (load-file my-secrets-file)))
+    (mikemacs/load-if-exists my-secrets-file))
   ;; Load a file with local-only settings (not version controlled).
   (let ((my-local-file (expand-file-name "local.el"
                                          dotspacemacs-directory)))
-    (when (file-exists-p my-local-file)
-      (load-file my-local-file)))
+    (mikemacs/load-if-exists my-local-file))
   (add-hook 'sql-mode-hook
             '(lambda ()
                (when (and (buffer-file-name)
                           (string-match-p "/target/" (buffer-file-name)))
                  (toggle-read-only 1))))
   )
+
+(defun mikemacs/load-if-exists (f)
+  (when (file-exists-p f)
+    (load-file f)))
+
+(defun mikemacs/makefile-tab-width-hook ()
+  (setq tab-width 8))
+
+(defun mikemacs/python-docstring-mode-hook ()
+  (python-docstring-mode t))
