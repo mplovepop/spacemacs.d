@@ -511,4 +511,9 @@ before packages are loaded."
                                          dotspacemacs-directory)))
     (when (file-exists-p my-local-file)
       (load-file my-local-file)))
+  (add-hook 'sql-mode-hook
+            '(lambda ()
+               (when (and (buffer-file-name)
+                          (string-match-p "/target/" (buffer-file-name)))
+                 (toggle-read-only 1))))
   )
