@@ -52,6 +52,7 @@ This function should only modify configuration layer settings."
      html
      javascript
      latex
+     lsp
      markdown
      multiple-cursors
      ;; neotree
