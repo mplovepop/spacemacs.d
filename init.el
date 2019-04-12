@@ -507,6 +507,7 @@ before packages are loaded."
                                          dotspacemacs-directory)))
     (mikemacs/load-if-exists my-local-file))
   (add-hook 'sql-mode-hook 'lovepop/sql-mode-read-only-dbt-target)
+  (add-hook 'sqlind-minor-mode-hook 'lovepop/sqlind-fix-indentation)
   )
 
 (defun mikemacs/load-if-exists (f)
@@ -523,3 +524,11 @@ before packages are loaded."
   (when (and (buffer-file-name)
              (string-match-p "/target/" (buffer-file-name)))
     (toggle-read-only 1)))
+
+(defun lovepop/sqlind-fix-indentation ()
+  (setq sqlind-indentation-offsets-alist
+        `((select-clause 0)
+          (insert-clause 0)
+          (delete-clause 0)
+          (update-clause 0)
+          ,@sqlind-default-indentation-offsets-alist)))
